@@ -103,6 +103,9 @@ class AIInsightsView(APIView):
             "today": str(today),
         }
 
+        if total == 0:
+            return Response({"insight": "No company data available yet. Add companies to start seeing AI-powered insights.", "stats": stats})
+
         try:
             insight = ai_service.generate_dashboard_insights(stats)
         except Exception as e:

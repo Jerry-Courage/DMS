@@ -62,16 +62,20 @@ Return ONLY valid JSON, no explanation. Example:
 
 def generate_dashboard_insights(stats: dict) -> str:
     """Generate a plain-English AI summary of dashboard statistics."""
+    if stats.get("total_companies", 0) == 0:
+        return "No company data available yet. Add companies to start seeing AI-powered insights."
+
     system = """You are an analyst for a regulatory document management system in Ghana.
 Given dashboard statistics, write a concise 3-5 sentence insight summary.
 Focus on: notable trends, sectors needing attention, permit expiry risks, and data gaps.
+IMPORTANT: Only reference numbers and facts present in the provided statistics. Do not invent figures.
 Be direct and actionable. No bullet points, just flowing sentences."""
 
     user_content = f"Dashboard statistics:\n{json.dumps(stats, indent=2)}"
     return _chat([
         {"role": "system", "content": system},
         {"role": "user", "content": user_content},
-    ], temperature=0.5)
+    ], temperature=0.2)
 
 
 def detect_anomalies(companies: list) -> list:
@@ -82,12 +86,29 @@ def detect_anomalies(companies: list) -> list:
     if not companies:
         return []
 
+    if len(companies) < 2:
+        # With only one record, only check for missing fields — skip duplicate detection
+        c = companies[0]
+        anomalies = []
+        missing = [f for f in ['file_number', 'permit_number', 'district'] if not c.get(f)]
+        if missing:
+            anomalies.append({
+                "type": "missing_data",
+                "company_id": c["id"],
+                "company_name": c["company_name"],
+                "message": f"Missing fields: {', '.join(missing)}"
+            })
+        return anomalies
+
     system = """You are a data quality analyst for a company registry database.
 Analyze the provided company records and identify anomalies such as:
 1. Potential duplicate companies (similar names in same sector/district)
 2. Companies with missing critical fields (permit number, file number, district)
 3. Companies with permits already expired
 4. Unusual patterns (e.g. payment amount of 0, very old submission dates with no permit)
+
+CRITICAL: Only flag issues that are clearly visible in the data provided.
+Do NOT invent anomalies or assume data that isn't there.
 
 Return ONLY a JSON array of anomaly objects. Each object must have:
 - type: "duplicate" | "missing_data" | "expired_permit" | "unusual"
