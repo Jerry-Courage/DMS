@@ -15,24 +15,14 @@ const SECTORS = [
 ]
 
 const EMPTY = {
-  sector: 'health',
-  phone_number: '',
-  file_number: '',
-  company_name: '',
-  type_of_undertaking: '',
-  location: '',
-  district: '',
-  type_of_application: '',
-  date_of_invoice: '',
-  invoice_number: '',
-  payment_amount: '',
-  date_of_submission: '',
-  date_received_from_rg: '',
-  date_of_permit_issued: '',
-  permit_number: '',
-  permit_expiry_date: '',
-  remarks: '',
+  sector: 'health', phone_number: '', file_number: '', company_name: '',
+  type_of_undertaking: '', location: '', district: '', type_of_application: '',
+  date_of_invoice: '', invoice_number: '', payment_amount: '',
+  date_of_submission: '', date_received_from_rg: '', date_of_permit_issued: '',
+  permit_number: '', permit_expiry_date: '', remarks: '',
 }
+
+const inputCls = "w-full bg-dark-700 border border-dark-500 rounded-xl px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors"
 
 function Field({ label, children, required }) {
   return (
@@ -44,8 +34,6 @@ function Field({ label, children, required }) {
     </div>
   )
 }
-
-const inputCls = "w-full bg-dark-700 border border-dark-500 rounded-xl px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors"
 
 export default function CompanyFormPage() {
   const { id } = useParams()
@@ -71,7 +59,6 @@ export default function CompanyFormPage() {
     setLoading(true)
     try {
       const payload = { ...form }
-      // Convert empty strings to null for date/number fields
       ;['date_of_invoice', 'date_of_submission', 'date_received_from_rg', 'date_of_permit_issued', 'permit_expiry_date'].forEach(f => {
         if (!payload[f]) payload[f] = null
       })
@@ -80,49 +67,41 @@ export default function CompanyFormPage() {
       if (isEdit) {
         await api.patch(`/companies/${id}/`, payload)
         toast.success('Company updated')
+        navigate(`/companies/${id}`)
       } else {
         const { data } = await api.post('/companies/', payload)
         toast.success('Company added')
         navigate(`/companies/${data.id}`)
-        return
       }
-      navigate(`/companies/${id}`)
     } catch (err) {
-      const msg = err.response?.data ? JSON.stringify(err.response.data) : 'Something went wrong'
-      toast.error(msg)
+      toast.error(err.response?.data ? JSON.stringify(err.response.data) : 'Something went wrong')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex items-center gap-4 mb-6">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-dark-800 border border-dark-600 text-gray-400 hover:text-white transition-colors">
+    <div className="p-4 md:p-6 max-w-4xl mx-auto">
+      <div className="flex items-center gap-3 mb-5">
+        <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-dark-800 border border-dark-600 text-gray-400 hover:text-white transition-colors flex-shrink-0">
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h1 className="text-xl font-bold text-white">{isEdit ? 'Edit Company' : 'Add Company'}</h1>
-          <p className="text-gray-500 text-sm">Fill in the company details below</p>
+          <h1 className="text-lg md:text-xl font-bold text-white">{isEdit ? 'Edit Company' : 'Add Company'}</h1>
+          <p className="text-gray-500 text-xs md:text-sm">Fill in the company details below</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Sector */}
-        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-5">
-          <h2 className="text-sm font-semibold text-white mb-4">Sector</h2>
+        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-4">
+          <h2 className="text-sm font-semibold text-white mb-3">Sector</h2>
           <div className="flex flex-wrap gap-2">
             {SECTORS.map(s => (
-              <button
-                key={s.value}
-                type="button"
-                onClick={() => setForm({ ...form, sector: s.value })}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  form.sector === s.value
-                    ? 'bg-accent text-dark-900'
-                    : 'bg-dark-700 text-gray-400 hover:text-white border border-dark-500'
-                }`}
-              >
+              <button key={s.value} type="button" onClick={() => setForm({ ...form, sector: s.value })}
+                className={`px-3 py-1.5 rounded-xl text-xs md:text-sm font-medium transition-colors ${
+                  form.sector === s.value ? 'bg-accent text-dark-900' : 'bg-dark-700 text-gray-400 hover:text-white border border-dark-500'
+                }`}>
                 {s.label}
               </button>
             ))}
@@ -130,14 +109,14 @@ export default function CompanyFormPage() {
         </div>
 
         {/* Company Info */}
-        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-5">
-          <h2 className="text-sm font-semibold text-white mb-4">Company Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-4">
+          <h2 className="text-sm font-semibold text-white mb-3">Company Information</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Company Name" required>
               <input type="text" value={form.company_name} onChange={set('company_name')} required className={inputCls} placeholder="Enter company name" />
             </Field>
             <Field label="File Number">
-              <input type="text" value={form.file_number} onChange={set('file_number')} className={inputCls} placeholder="e.g. FILE/2024/001" />
+              <input type="text" value={form.file_number} onChange={set('file_number')} className={inputCls} placeholder="FILE/2024/001" />
             </Field>
             <Field label="Phone Number">
               <input type="text" value={form.phone_number} onChange={set('phone_number')} className={inputCls} placeholder="+233..." />
@@ -152,15 +131,15 @@ export default function CompanyFormPage() {
               <input type="text" value={form.district} onChange={set('district')} className={inputCls} placeholder="e.g. Accra Metropolitan" />
             </Field>
             <Field label="Type of Application">
-              <input type="text" value={form.type_of_application} onChange={set('type_of_application')} className={inputCls} placeholder="e.g. New / Renewal" />
+              <input type="text" value={form.type_of_application} onChange={set('type_of_application')} className={inputCls} placeholder="New / Renewal" />
             </Field>
           </div>
         </div>
 
         {/* Invoice & Payment */}
-        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-5">
-          <h2 className="text-sm font-semibold text-white mb-4">Invoice & Payment</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-4">
+          <h2 className="text-sm font-semibold text-white mb-3">Invoice & Payment</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Date of Invoice">
               <input type="date" value={form.date_of_invoice} onChange={set('date_of_invoice')} className={inputCls} />
             </Field>
@@ -174,9 +153,9 @@ export default function CompanyFormPage() {
         </div>
 
         {/* Submission & Permit */}
-        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-5">
-          <h2 className="text-sm font-semibold text-white mb-4">Submission & Permit</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-4">
+          <h2 className="text-sm font-semibold text-white mb-3">Submission & Permit</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Date of Submission (Head/RG Office)">
               <input type="date" value={form.date_of_submission} onChange={set('date_of_submission')} className={inputCls} />
             </Field>
@@ -196,28 +175,19 @@ export default function CompanyFormPage() {
         </div>
 
         {/* Remarks */}
-        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-5">
+        <div className="bg-dark-800 border border-dark-600 rounded-2xl p-4">
           <Field label="Remarks">
-            <textarea
-              value={form.remarks}
-              onChange={set('remarks')}
-              rows={3}
-              className={inputCls}
-              placeholder="Any additional notes..."
-            />
+            <textarea value={form.remarks} onChange={set('remarks')} rows={3} className={inputCls} placeholder="Any additional notes..." />
           </Field>
         </div>
 
-        <div className="flex justify-end gap-3">
-          <button type="button" onClick={() => navigate(-1)} className="px-5 py-2.5 text-sm text-gray-400 hover:text-white transition-colors">
+        <div className="flex justify-end gap-3 pb-4">
+          <button type="button" onClick={() => navigate(-1)} className="px-4 py-2.5 text-sm text-gray-400 hover:text-white transition-colors">
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex items-center gap-2 bg-accent text-dark-900 font-semibold px-5 py-2.5 rounded-xl text-sm hover:bg-yellow-300 transition-colors disabled:opacity-60"
-          >
-            <Save size={16} />
+          <button type="submit" disabled={loading}
+            className="flex items-center gap-2 bg-accent text-dark-900 font-semibold px-5 py-2.5 rounded-xl text-sm hover:bg-yellow-300 transition-colors disabled:opacity-60">
+            <Save size={15} />
             {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Company'}
           </button>
         </div>
