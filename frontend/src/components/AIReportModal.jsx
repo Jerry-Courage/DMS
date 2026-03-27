@@ -27,7 +27,8 @@ export default function AIReportModal({ onClose }) {
       const { data } = await api.post('/ai/report/', { sector })
       setReport(data)
     } catch (err) {
-      setError(err.response?.data?.error ?? 'Report generation failed')
+      const msg = err.response?.data?.error ?? 'Report generation failed'
+      setError(msg)
     } finally {
       setLoading(false)
     }

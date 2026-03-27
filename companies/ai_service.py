@@ -126,19 +126,27 @@ Return [] if no anomalies found. Return ONLY JSON, no explanation."""
 
 def generate_report(sector: str, filters: dict, companies: list) -> str:
     """Generate a formatted text report for a set of companies."""
+    if not companies:
+        return "No companies found for the selected sector/filters. Add company records first before generating a report."
+
     system = """You are a report writer for a regulatory document management system.
-Write a professional summary report based on the provided company data.
-Include: overview, key statistics, notable observations, permit status summary, and recommendations.
-Use clear headings and professional language. Keep it concise but thorough."""
+Write a professional summary report based STRICTLY on the provided company data.
+CRITICAL RULES:
+- Only use numbers and facts from the actual data provided. Do NOT invent, estimate, or assume any figures.
+- If a field is missing or empty for a company, note it as missing — do not fill it in.
+- Base all statistics only on what is explicitly present in the JSON data.
+Include: overview, key statistics (derived only from the data), permit status summary, and observations.
+Use clear headings and professional language."""
 
     user_content = f"""
 Sector: {sector or 'All Sectors'}
-Filters applied: {json.dumps(filters)}
-Total companies: {len(companies)}
+Total companies in dataset: {len(companies)}
 Company data:
 {json.dumps(companies[:50], indent=2)}
+
+Generate a report using ONLY the above data. Do not add any figures not present in this data.
 """
     return _chat([
         {"role": "system", "content": system},
         {"role": "user", "content": user_content},
-    ], temperature=0.4)
+    ], temperature=0.1)

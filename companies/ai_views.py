@@ -158,6 +158,9 @@ class AIReportView(APIView):
                 "payment_amount", "date_of_permit_issued", "remarks"
             )[:50]
         )
+
+        if not companies:
+            return Response({"error": f"No companies found{' in the ' + sector + ' sector' if sector else ''}. Add records first."}, status=400)
         for c in companies:
             for k, v in c.items():
                 if hasattr(v, 'isoformat'):
