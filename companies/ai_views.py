@@ -63,15 +63,11 @@ class AIInsightsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        from django.db.models import Count, Sum, Avg
+        from django.db.models import Count
+        from datetime import timedelta
 
         today = timezone.now().date()
-        expiring_soon = Company.objects.filter(
-            permit_expiry_date__gte=today,
-            permit_expiry_date__lte=today.replace(day=today.day)
-        )
 
-        # Build stats payload for AI
         sector_counts = list(
             Company.objects.values("sector")
             .annotate(count=Count("id"))
@@ -85,9 +81,6 @@ class AIInsightsView(APIView):
         ).count()
         no_permit = Company.objects.filter(permit_number="").count()
         no_file = Company.objects.filter(file_number="").count()
-
-        # Recent 30 days
-        from datetime import timedelta
         last_30 = Company.objects.filter(
             created_at__date__gte=today - timedelta(days=30)
         ).count()
