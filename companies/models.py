@@ -20,6 +20,7 @@ class Company(models.Model):
         ('infrastructure', 'Infrastructure'),
         ('hospitality', 'Hospitality'),
         ('telemast', 'Telemast'),
+        ('energy', 'Energy'),
     ]
 
     # Core fields

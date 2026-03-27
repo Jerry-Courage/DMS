@@ -14,6 +14,7 @@ const SECTORS = [
   { value: 'infrastructure', label: 'Infrastructure' },
   { value: 'hospitality', label: 'Hospitality' },
   { value: 'telemast', label: 'Telemast' },
+  { value: 'energy', label: 'Energy' },
 ]
 
 const SECTOR_BADGE = {
@@ -24,12 +25,13 @@ const SECTOR_BADGE = {
   infrastructure: 'bg-pink-900/40 text-pink-400',
   hospitality: 'bg-purple-900/40 text-purple-400',
   telemast: 'bg-teal-900/40 text-teal-400',
+  energy: 'bg-yellow-900/40 text-yellow-400',
 }
 
 const SECTOR_COLORS = {
   health: '#c8f135', agriculture: '#4ade80', mining: '#fb923c',
   agrochemicals: '#60a5fa', infrastructure: '#f472b6',
-  hospitality: '#a78bfa', telemast: '#34d399',
+  hospitality: '#a78bfa', telemast: '#34d399', energy: '#fbbf24',
 }
 
 export default function CompaniesPage() {

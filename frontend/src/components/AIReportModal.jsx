@@ -11,6 +11,7 @@ const SECTORS = [
   { value: 'infrastructure', label: 'Infrastructure' },
   { value: 'hospitality', label: 'Hospitality' },
   { value: 'telemast', label: 'Telemast' },
+  { value: 'energy', label: 'Energy' },
 ]
 
 export default function AIReportModal({ onClose }) {

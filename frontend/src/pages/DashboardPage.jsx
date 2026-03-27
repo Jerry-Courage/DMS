@@ -12,7 +12,7 @@ import AIReportModal from '../components/AIReportModal'
 const SECTOR_COLORS = {
   health: '#c8f135', agriculture: '#4ade80', mining: '#fb923c',
   agrochemicals: '#60a5fa', infrastructure: '#f472b6',
-  hospitality: '#a78bfa', telemast: '#34d399',
+  hospitality: '#a78bfa', telemast: '#34d399', energy: '#fbbf24',
 }
 
 function StatCard({ label, value, icon: Icon, accent }) {
