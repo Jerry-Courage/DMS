@@ -10,7 +10,7 @@ export default function PermitAlertsPanel() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.get('/ai/permit-alerts/?days=30').then(r => setData(r.data))
+    api.get('/ai/permit-alerts/?days=90').then(r => setData(r.data))
   }, [])
 
   const list = tab === 'expiring' ? data?.expiring_soon : data?.expired
@@ -32,7 +32,7 @@ export default function PermitAlertsPanel() {
             tab === 'expiring' ? 'bg-yellow-900/40 text-yellow-400' : 'text-gray-500 hover:text-white'
           }`}
         >
-          Expiring Soon
+          Expiring in 3 Months
           {expiringCount > 0 && <span className="bg-yellow-400 text-dark-900 rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold">{expiringCount}</span>}
         </button>
         <button
@@ -50,7 +50,7 @@ export default function PermitAlertsPanel() {
         {!data && <p className="text-xs text-gray-600 py-2">Loading...</p>}
         {data && list?.length === 0 && (
           <p className="text-xs text-gray-600 py-2">
-            {tab === 'expiring' ? 'No permits expiring in the next 30 days.' : 'No expired permits.'}
+            {tab === 'expiring' ? 'No permits expiring in the next 3 months.' : 'No expired permits.'}
           </p>
         )}
         {list?.map(c => {

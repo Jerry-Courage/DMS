@@ -79,9 +79,9 @@ class AIInsightsView(APIView):
         )
         total = Company.objects.count()
         expired = Company.objects.filter(permit_expiry_date__lt=today).count()
-        expiring_30 = Company.objects.filter(
+        expiring_90 = Company.objects.filter(
             permit_expiry_date__gte=today,
-            permit_expiry_date__lte=today.replace(month=today.month if today.day <= 1 else today.month)
+            permit_expiry_date__lte=today + timedelta(days=90)
         ).count()
         no_permit = Company.objects.filter(permit_number="").count()
         no_file = Company.objects.filter(file_number="").count()
@@ -96,7 +96,7 @@ class AIInsightsView(APIView):
             "total_companies": total,
             "companies_per_sector": sector_counts,
             "expired_permits": expired,
-            "expiring_in_30_days": expiring_30,
+            "expiring_in_90_days": expiring_90,
             "missing_permit_number": no_permit,
             "missing_file_number": no_file,
             "registered_last_30_days": last_30,
@@ -186,7 +186,7 @@ class PermitAlertsView(APIView):
     def get(self, request):
         from datetime import timedelta
         today = timezone.now().date()
-        days = int(request.query_params.get("days", 30))
+        days = int(request.query_params.get("days", 90))
 
         expired = CompanyListSerializer(
             Company.objects.filter(permit_expiry_date__lt=today).order_by("permit_expiry_date"),
